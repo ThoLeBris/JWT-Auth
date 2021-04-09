@@ -1,28 +1,10 @@
-import React, { useState, useEffect } from 'react'
+import React, { useContext } from 'react'
 import { Link } from 'react-router-dom'
-
+import { UserContext } from '../UserContext'
 
 const User = () => {
 
-    const [username,setUsername] = useState("");
-
-
-    useEffect(()=>{
-        ( 
-            async ()=> {
-            const response = await fetch('http://localhost:8000/api/user/', 
-            {
-                headers: {'Content-Type':'application/json'},
-                credentials:'include'
-            })
-
-            const content = await response.json();
-
-            setUsername(content.username);
-
-            }
-        )()
-    }, []); 
+    const {user, setUser} = useContext(UserContext) 
 
     //? Fonction Log Out qui va déconnecter l'utilisateur actuel
     const logOut = async (e)=>{
@@ -34,18 +16,13 @@ const User = () => {
                 credentials:'include'
             }
         )
-        // setRedirect(true)
-        setUsername('');
+        setUser(null);
     }
-
-    // if(redirect){
-    //     return <Redirect to='/user'/>;
-    // }
 
 
     let link;
 
-    if(!username){
+    if(!user){
         link = (
             <Link to="/login" className="btn btn-success">LogIn</Link>
         )
@@ -61,19 +38,10 @@ const User = () => {
     return (
         <div>
             <h2>
-                {username ? `Welcome ${username}` : `Log-in to see your page`}
+                {user ? `Welcome ${user.username}` : `Log-in to see your page`}
             </h2>
 
             {link}
-            {/* <div>
-                <button
-                    className="w-100 btn btn-lg btn-primary"
-                    type="submit"
-                    onClick={logOut}
-                >
-                    Log Out
-                </button>
-            </div>  */}
         </div>
     )
 }

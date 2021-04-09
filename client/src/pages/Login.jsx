@@ -1,11 +1,13 @@
-import React, { useState } from 'react'
+import React, { useState, useContext } from 'react'
 import { Redirect } from 'react-router-dom'
+import { UserContext } from '../UserContext'
 
 const Login = ()=> {
     
+    const {user, setUser} = useContext(UserContext)
+    
     const [email,setEmail] = useState("");
     const [password,setPassword] = useState("");
-
     const [redirect,setRedirect] = useState(false);
 
     const submit = async (e)=>{
@@ -22,9 +24,24 @@ const Login = ()=> {
                 })
             }
         )
+        
+        const response = await fetch('http://localhost:8000/api/user/', 
+                {
+                    headers: {'Content-Type':'application/json'},
+                    credentials:'include'
+                })
+
+                const content = await response.json();
+                
+        if(content._id){
+            setUser(content);
+        }
         setRedirect(true);
     }
 
+    if(user){
+        return <Redirect to='/'/>;
+    }
     if(redirect){
         return <Redirect to='/user'/>;
     }
